@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Last Master - acompanhamento Last.fm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=security-netlify-1">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegação principal">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">LM</span>
+          <div>
+            <strong>Last Master</strong>
+            <span>músicas sob controle</span>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Seções">
+          <span class="nav-group">Dashboard</span>
+          <a href="#overview" class="is-active" data-nav-view="summary">Visão geral</a>
+          <a href="#tracksSection" data-nav-view="activity">Atividade</a>
+          <a href="#artists" data-nav-view="rankings">Rankings</a>
+          <a href="#stats" data-nav-view="deep">Estatísticas</a>
+          <span class="nav-group">Conta</span>
+          <button class="nav-button" id="openOnboardingButton" type="button">Conectar dados</button>
+        </nav>
+
+        <section class="mini-panel" aria-label="Resumo rápido">
+          <span class="eyebrow">Sequência</span>
+          <strong id="streakValue">0 dias</strong>
+          <small id="streakHint">Conecte ou importe para calcular</small>
+          <span class="mini-divider" aria-hidden="true"></span>
+          <small id="lastSyncLabel">Última atualização da API: nunca</small>
+        </section>
+      </aside>
+
+      <main>
+        <section class="hero" id="overview">
+          <div class="hero-copy">
+            <span class="eyebrow">Painel Last.fm</span>
+            <h1>Entenda seus hábitos musicais sem se perder nos dados.</h1>
+            <p>Acompanhe scrobbles, artistas, repetições e dias mais intensos em um painel simples de explorar, com filtros para investigar quando fizer sentido.</p>
+            <div class="hero-actions">
+              <button class="button primary" id="connectHeroButton" type="button">Conectar Last.fm</button>
+            </div>
+          </div>
+
+          <div class="now-playing" aria-label="Música em destaque">
+            <canvas id="pulseCanvas" width="320" height="320" aria-hidden="true"></canvas>
+            <div class="album-stack" aria-hidden="true">
+              <img class="album-art art-one" src="" alt="">
+              <img class="album-art art-two" src="" alt="">
+              <img class="album-art art-three" src="" alt="">
+            </div>
+            <div class="track-spotlight">
+              <img id="spotlightImage" src="" alt="">
+              <div>
+                <span class="eyebrow">Agora em destaque</span>
+                <strong id="spotlightTrack">Nenhuma faixa carregada</strong>
+                <span id="spotlightArtist">Conecte sua conta para carregar seus destaques</span>
+              </div>
+              <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="empty-state" id="emptyState" hidden>
+          <div>
+            <span class="eyebrow">Comece por aqui</span>
+            <h2>Conecte sua conta ou importe seu histórico para ver o painel ganhar vida.</h2>
+            <p>Assim que houver músicas, os cards, gráficos e rankings aparecem com seus dados do Last.fm.</p>
+          </div>
+          <div class="empty-actions">
+            <button class="button primary" id="emptyConnectButton" type="button">Conectar Last.fm</button>
+          </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="Métricas principais">
+          <div class="metrics-toolbar">
+            <div>
+              <span class="eyebrow">Resumo</span>
+              <h2>Métricas principais</h2>
+            </div>
+            <label>
+              Escopo
+              <select id="metricScopeSelect" aria-label="Escopo das métricas principais">
+                <option value="all">Todos os tempos</option>
+                <option value="year">Ano selecionado</option>
+                <option value="month" selected>Mês selecionado</option>
+              </select>
+            </label>
+          </div>
+          <article data-metric="scrobbles">
+            <span>Scrobbles</span>
+            <strong id="totalScrobbles">0</strong>
+            <small id="scrobbleDelta">Conecte sua conta para começar</small>
+          </article>
+          <article data-metric="artists">
+            <span>Artistas únicos</span>
+            <strong id="uniqueArtists">0</strong>
+            <small id="artistDelta">Sua variedade musical aparecerá aqui</small>
+          </article>
+          <article data-metric="topTrack">
+            <span>Faixa mais repetida</span>
+            <strong id="topTrack">Sem dados ainda</strong>
+            <small id="topTrackArtist">Vamos descobrir seu replay favorito</small>
+          </article>
+          <article data-metric="bestDay">
+            <span>Dia mais musical</span>
+            <strong id="bestDay">Sem dados ainda</strong>
+            <small id="bestDayCount">O dia mais intenso aparecerá aqui</small>
+          </article>
+          <article data-metric="longestRepeat">
+            <span>Maior repetição seguida</span>
+            <strong id="longestRepeat">Sem dados ainda</strong>
+            <small id="longestRepeatCount">Sequência sem parar da mesma música</small>
+          </article>
+          <article data-metric="bestYear">
+            <span>Ano mais ouvido</span>
+            <strong id="bestYear">Sem dados ainda</strong>
+            <small id="bestYearCount">Ano com mais scrobbles</small>
+          </article>
+          <article data-metric="minutes" class="extra-metric">
+            <span>Minutos estimados</span>
+            <strong id="minutesListened">0</strong>
+            <small>Baseado em 3m30s por faixa</small>
+          </article>
+          <article data-metric="bestTrackDay" class="extra-metric">
+            <span>Mesmo som no dia</span>
+            <strong id="bestTrackDay">Sem dados ainda</strong>
+            <small id="bestTrackDayCount">Faixa mais repetida em um dia</small>
+          </article>
+          <article data-metric="bestArtistDay" class="extra-metric">
+            <span>Banda no dia</span>
+            <strong id="bestArtistDay">Sem dados ainda</strong>
+            <small id="bestArtistDayCount">Artista mais ouvido em um dia</small>
+          </article>
+          <article data-metric="bestAlbumDay" class="extra-metric">
+            <span>Álbum no dia</span>
+            <strong id="bestAlbumDay">Sem dados ainda</strong>
+            <small id="bestAlbumDayCount">Álbum mais ouvido em um dia</small>
+          </article>
+        </section>
+
+        <details class="more-metrics" id="moreMetricsDetails">
+          <summary>Ver mais métricas</summary>
+        </details>
+
+        <section class="filter-workbench" aria-label="Filtros do dashboard">
+          <div class="filter-heading">
+            <div>
+              <span class="eyebrow">Análise dinâmica</span>
+              <h2>Filtre e veja as músicas do recorte</h2>
+            </div>
+            <div class="filter-heading-actions">
+              <span class="stat-chip" id="activeFilterLabel">Mês atual</span>
+              <div class="report-actions" aria-label="Ações de relatório">
+                <button class="button ghost compact-button" id="exportPdfButton" type="button">Exportar PDF</button>
+                <button class="button ghost compact-button" id="exportXlsButton" type="button">Exportar XLS</button>
+              </div>
+            </div>
+          </div>
+
+          <select id="analysisViewSelect" class="sr-control" aria-label="Visualização">
+            <option value="summary" selected>Visão geral</option>
+            <option value="activity">Atividade</option>
+            <option value="rankings">Rankings</option>
+            <option value="deep">Estatísticas</option>
+          </select>
+          <select id="focusTypeSelect" class="sr-control" aria-label="Tipo de foco">
+            <option value="all" selected>Não filtrar</option>
+            <option value="artist">Artista/banda</option>
+            <option value="album">Álbum</option>
+            <option value="genre">Estilo</option>
+            <option value="track">Música</option>
+          </select>
+          <input id="focusValueInput" class="sr-control" list="focusOptions" type="search" placeholder="Digite para filtrar">
+          <datalist id="focusOptions"></datalist>
+
+          <div class="filter-bar fixed-filters" aria-label="Filtros principais">
+            <label>
+              Período
+              <select id="periodSelect" aria-label="Filtro de estatísticas">
+                <option value="all">Tudo</option>
+                <option value="day">Dia específico</option>
+                <option value="month" selected>Mês específico</option>
+                <option value="year">Ano específico</option>
+              </select>
+            </label>
+            <label class="date-filter" id="dayFilterWrap">
+              Dia
+              <input id="dayFilter" type="date" aria-label="Escolher dia">
+            </label>
+            <label class="date-filter" id="monthFilterWrap">
+              Mês
+              <input id="monthFilter" type="month" aria-label="Escolher mês">
+            </label>
+            <label class="date-filter" id="yearFilterWrap">
+              Ano
+              <input id="yearFilter" type="number" min="2002" max="2100" step="1" aria-label="Escolher ano">
+            </label>
+            <label>
+              Banda/artista
+              <select id="artistFilterSelect" aria-label="Filtrar por banda ou artista">
+                <option value="">Todas as bandas</option>
+              </select>
+            </label>
+            <label>
+              Álbum
+              <select id="albumFilterSelect" aria-label="Filtrar por álbum">
+                <option value="">Todos os álbuns</option>
+              </select>
+            </label>
+            <label class="utility-filter">
+              Top
+              <select id="resultLimitSelect">
+                <option value="5" selected>Top 5</option>
+                <option value="10">Top 10</option>
+                <option value="20">Top 20</option>
+              </select>
+            </label>
+            <button class="button primary compact-button" id="searchFiltersButton" type="button">Pesquisar</button>
+            <button class="button ghost compact-button" id="advancedFiltersButton" type="button" aria-expanded="false" aria-controls="advancedFilters">Mais filtros</button>
+            <button class="button ghost compact-button" id="clearFiltersButton" type="button">Limpar</button>
+          </div>
+
+          <div class="top-limit-tags" aria-label="Quantidade de resultados">
+            <span>Mostrar</span>
+            <button class="limit-tag is-active" type="button" data-result-limit="5">Top 5</button>
+            <button class="limit-tag" type="button" data-result-limit="10">Top 10</button>
+            <button class="limit-tag" type="button" data-result-limit="20">Top 20</button>
+          </div>
+
+          <div class="active-filter-chips" id="activeFilterChips" aria-label="Filtros ativos">
+          </div>
+        </section>
+
+        <section class="workspace">
+          <div class="main-column">
+            <section class="section-band" id="tracksSection" data-view-panel="summary activity rankings deep">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Músicas por artista</span>
+                  <h2>Detalhe do recorte</h2>
+                </div>
+                <span class="stat-chip passive" id="trackListCount">0 músicas</span>
+              </div>
+              <div class="track-list" id="trackList"></div>
+            </section>
+
+            <section class="section-band" id="artists" data-view-panel="summary rankings">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Ranking</span>
+                  <h2>Artistas em alta</h2>
+                </div>
+                <button class="icon-button" id="sortArtistsButton" type="button" title="Alternar ordenação" aria-label="Alternar ordenação">A/Z</button>
+              </div>
+              <div class="artist-list" id="artistList"></div>
+            </section>
+
+            <section class="section-band" id="bandAlbumsSection" data-view-panel="summary activity rankings deep">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Banda selecionada</span>
+                  <h2>Álbuns no recorte</h2>
+                </div>
+              </div>
+              <div class="data-list" id="bandAlbumList"></div>
+            </section>
+
+            <section class="section-band" id="suggestedMetricsSection" data-view-panel="summary deep">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Sugestões</span>
+                  <h2>Métricas boas para acompanhar</h2>
+                </div>
+              </div>
+              <div class="suggestion-grid" id="suggestedMetricsList"></div>
+            </section>
+
+            <section class="section-band" id="stats" data-view-panel="deep rankings">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Estatísticas</span>
+                  <h2>Recortes detalhados</h2>
+                </div>
+              </div>
+              <div class="stats-layout">
+                <article class="stat-panel wide" data-stat="monthly">
+                  <h3>Mais ouvida em cada mês</h3>
+                  <div class="data-list" id="monthlyTopList"></div>
+                </article>
+                <article class="stat-panel" data-stat="hourly">
+                  <h3>Por horário</h3>
+                  <div class="data-list" id="hourlyList"></div>
+                </article>
+                <article class="stat-panel" data-stat="genre">
+                  <h3>Por estilo</h3>
+                  <div class="data-list" id="genreList"></div>
+                </article>
+                <article class="stat-panel" data-stat="year">
+                  <h3>Ano da banda</h3>
+                  <div class="data-list" id="artistYearList"></div>
+                </article>
+                <article class="stat-panel wide" data-stat="album">
+                  <h3>Álbuns mais ouvidos</h3>
+                  <div class="data-list" id="albumList"></div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <div class="side-column">
+            <section class="section-band" id="goals" data-view-panel="summary activity">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Metas</span>
+                  <h2>Semana</h2>
+                </div>
+                <output id="goalOutput">0%</output>
+              </div>
+              <label class="goal-control">
+                Meta de scrobbles
+                <input id="goalInput" type="range" min="25" max="500" step="25" value="150">
+              </label>
+              <div class="progress-track" aria-hidden="true"><span id="goalBar"></span></div>
+              <p id="goalText" class="helper">Defina uma meta para acompanhar seu ritmo.</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="advanced-drawer" id="advancedFilters" hidden>
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Filtros avançados</span>
+              <h2>Refine sua análise</h2>
+            </div>
+          </div>
+          <div class="advanced-grid">
+            <fieldset>
+              <legend>Período</legend>
+              <label class="check-row"><input type="radio" name="periodQuick" value="all"> Tudo</label>
+              <label class="check-row"><input type="radio" name="periodQuick" value="day"> Dia específico</label>
+              <label class="check-row"><input type="radio" name="periodQuick" value="month" checked> Mês específico</label>
+              <label class="check-row"><input type="radio" name="periodQuick" value="year"> Ano específico</label>
+              <span class="future-filter">Intervalo personalizado em breve</span>
+            </fieldset>
+
+            <fieldset>
+              <legend>Ranking e volume</legend>
+              <span class="future-filter">Ordenação: mais ouvidas, A/Z e recentes em breve</span>
+            </fieldset>
+
+            <fieldset>
+              <legend>Campos exibidos</legend>
+              <strong class="fieldset-subtitle">Métricas extras</strong>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="scrobbles" checked> Scrobbles</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="artists" checked> Artistas únicos</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="topTrack" checked> Faixa mais repetida</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="bestDay" checked> Dia mais musical</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="longestRepeat" checked> Maior repetição seguida</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="bestYear" checked> Ano mais ouvido</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="minutes"> Minutos estimados</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="bestTrackDay"> Mesmo som no dia</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="bestArtistDay"> Banda no dia</label>
+              <label class="check-row"><input type="checkbox" data-metric-toggle="bestAlbumDay"> Álbum no dia</label>
+              <strong class="fieldset-subtitle">Estatísticas detalhadas</strong>
+              <label class="check-row"><input type="checkbox" data-stat-toggle="monthly" checked> Mais ouvida por mês</label>
+              <label class="check-row"><input type="checkbox" data-stat-toggle="hourly" checked> Por horário</label>
+              <label class="check-row"><input type="checkbox" data-stat-toggle="genre" checked> Por estilo</label>
+              <label class="check-row"><input type="checkbox" data-stat-toggle="year" checked> Ano da banda</label>
+              <label class="check-row"><input type="checkbox" data-stat-toggle="album" checked> Álbuns</label>
+            </fieldset>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="onboarding-modal" id="onboardingModal" aria-labelledby="onboardingTitle">
+      <form method="dialog" class="modal-close-form">
+        <button class="icon-button" value="cancel" aria-label="Fechar">X</button>
+      </form>
+      <div class="modal-grid">
+        <section class="modal-hero">
+          <span class="eyebrow">Conectar dados</span>
+          <h2 id="onboardingTitle">Traga seu histórico do Last.fm para o Last Master.</h2>
+          <p>Sincronize sua conta com uma API key ou importe uma lista manual. Tudo fica salvo apenas neste navegador.</p>
+        </section>
+
+        <section class="modal-content" id="connect">
+          <h3>Last.fm</h3>
+          <form id="lastfmForm" class="stacked-form">
+            <label>
+              Usuário
+              <input id="usernameInput" type="text" autocomplete="username" placeholder="seu_usuario">
+            </label>
+            <label>
+              API key
+              <input id="apiKeyInput" type="password" autocomplete="off" placeholder="cole sua chave">
+            </label>
+            <p class="auth-note">A conexão inicial carrega apenas o ano atual. Ao pesquisar anos, meses ou dias anteriores, o Last Master busca esse recorte na Last.fm.</p>
+            <label class="check-row api-memory-row">
+              <input id="rememberApiKeyCheckbox" type="checkbox">
+              Lembrar API key neste navegador
+            </label>
+            <div class="form-actions">
+              <button class="button primary" type="submit">Sincronizar</button>
+              <button class="button ghost" id="clearApiKeyButton" type="button">Limpar API salva</button>
+            </div>
+            <p class="connection-status" id="connectionStatus" role="status" aria-live="polite"></p>
+          </form>
+
+          <h3>Importação rápida</h3>
+          <textarea id="manualInput" rows="6" placeholder="Uma música por linha: Artista - Faixa - Álbum - Estilo - Ano"></textarea>
+          <button class="button secondary" id="importButton" type="button">Importar histórico</button>
+        </section>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js?v=security-netlify-1"></script>
+  </body>
+</html>
