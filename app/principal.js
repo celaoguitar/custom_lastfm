@@ -33,6 +33,10 @@ import {
   exportarPdf, exportarXls, baixarImagemGrafico,
   renderizarMeta,
 } from "./renderizacao.js";
+import {
+  atualizarInterfaceGrafica,
+  renderizarGraficoArtistas, renderizarGraficoHorario
+} from "./graficos.js"
 
 // ─── Dados de demonstração ─────────────────────────────────────────────────────
 
@@ -275,6 +279,7 @@ function limparApiKeySalva() {
   exibirNotificacao("API key removida.");
 }
 
+
 // ─── Sincronização com Last.fm ────────────────────────────────────────────────
 
 elementos.formularioLastfm.addEventListener("submit", async (evento) => {
@@ -345,6 +350,11 @@ elementos.formularioLastfm.addEventListener("submit", async (evento) => {
     if (elementos.botaoLimparApiKey) elementos.botaoLimparApiKey.disabled = false;
   }
 });
+
+// ─── Atualização gráficos ────────────────────────────────────────────────
+function dispararAtualizacaoGraficos(){
+  atualizarInterfaceGrafica(elementos);
+}
 
 // ─── Event listeners ──────────────────────────────────────────────────────────
 
@@ -420,6 +430,7 @@ document.querySelectorAll("[data-result-limit]").forEach((botao) => {
   botao.addEventListener("click", () => {
     elementos.limitResultados.value = botao.dataset.resultLimit;
     renderizarTudo();
+    dispararAtualizacaoGraficos();
   });
 });
 
@@ -450,7 +461,14 @@ elementos.rangeAtividadeGaveta?.addEventListener("change", () => {
 
 elementos.detalhesMetricasExtras.addEventListener("toggle", renderizarTudo);
 elementos.rangeAtividade?.addEventListener("change", desenharGraficoAtividade);
-elementos.seletorVisualizacao.addEventListener("change", renderizarTudo);
+elementos.seletorVisualizacao.addEventListener("change", () => {
+  renderizarTudo();
+  if(elementos.seletorVisualizacao.value === "graphics"){
+    requestAnimationFrame(() => {
+      dispararAtualizacaoGraficos();
+    });
+  }
+ });
 elementos.filtroPeriodo.addEventListener("change", sincronizarPeriodo);
 elementos.filtroDia.addEventListener("change", sincronizarPeriodo);
 elementos.filtroMes.addEventListener("change", sincronizarPeriodo);
@@ -471,7 +489,10 @@ elementos.tipoFoco.addEventListener("change", () => {
 });
 
 elementos.valorFoco.addEventListener("input", agendarRenderizacao);
-elementos.limitResultados.addEventListener("change", renderizarTudo);
+elementos.limitResultados.addEventListener("change", () => {
+  renderizarTudo();
+  dispararAtualizacaoGraficos();
+});
 elementos.escopoMetricas.addEventListener("change", renderizarTudo);
 
 document.querySelectorAll("[data-metric-toggle], [data-stat-toggle]").forEach((input) => {

@@ -34,6 +34,7 @@
           <a href="#tracksSection" data-nav-view="activity">Atividade</a>
           <a href="#artists" data-nav-view="rankings">Rankings</a>
           <a href="#stats" data-nav-view="deep">Estatísticas</a>
+          <a href="#graphics" data-nav-view="graphics">Gráficos</a>
           <span class="nav-group">Conta</span>
           <button class="nav-button" id="openOnboardingButton" type="button">Conectar dados</button>
         </nav>
@@ -179,6 +180,7 @@
             <option value="activity">Atividade</option>
             <option value="rankings">Rankings</option>
             <option value="deep">Estatísticas</option>
+            <option value="graphics">Gráficos</option>
           </select>
           <select id="focusTypeSelect" class="sr-control" aria-label="Tipo de foco">
             <option value="all" selected>Não filtrar</option>
@@ -289,6 +291,41 @@
                 </div>
               </div>
               <div class="suggestion-grid" id="suggestedMetricsList"></div>
+            </section>
+
+            <section class="section-band" id="graphics" data-view-panel="graphics deep">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">Análise Visual</span>
+                  <h2>Seus hábitos em gráficos</h2>
+                </div>
+                
+                <div class="graphics-container">
+                  <article class="stat-panel wide">
+                    <div class="panel-header">
+                      <h3>Top Artistas</h3>
+                      <p>Distribuição de scrobbles por artista no período</p>
+                    </div>
+
+                    <div class="chart-wrapper">
+                      <canvas id="graficoArtistasCanvas"></canvas>
+                    </div>    
+                  </article>
+
+                  <article class="stat-panel">
+                    <div class="panel-header">
+                      <h3>Hábitos por Horários</h3>
+                      <p>Volume de músicas ao longo do dia</p>
+                    </div>
+
+                    <div class="chart-wrapper">
+                      <canvas id="graficoHorarioCanvas"></canvas>
+                    </div>
+
+                  </article>
+
+                </div>
+
             </section>
 
             <section class="section-band" id="stats" data-view-panel="deep rankings">
@@ -431,6 +468,7 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="app/principal.js"></script>
   </body>
 </html>

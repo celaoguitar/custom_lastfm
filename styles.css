@@ -1483,3 +1483,47 @@ input[type="range"] {
     font-size: 2.6rem;
   }
 }
+
+.graphics-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stat-panel.wide {
+  grid-column: 1 / -1;
+}
+
+.stat-panel {
+  background: var(--bg-panel, #fff);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.panel-header {
+  margin-bottom: 15px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.panel-header p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #888780;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+
+canvas {
+  border: 3px solid red;
+  min-height: 300px;
+}
