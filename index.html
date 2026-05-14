@@ -224,7 +224,6 @@
                 <option value="20">Top 20</option>
               </select>
             </label>
-            <button class="button primary compact-button" id="searchFiltersButton" type="button">Pesquisar</button>
             <button class="button ghost compact-button" id="advancedFiltersButton" type="button" aria-expanded="false" aria-controls="advancedFilters">Mais filtros</button>
             <button class="button ghost compact-button" id="clearFiltersButton" type="button">Limpar</button>
           </div>
@@ -404,7 +403,7 @@
               API key
               <input id="apiKeyInput" type="password" autocomplete="off" placeholder="cole sua chave">
             </label>
-            <p class="auth-note">A conexão inicial carrega apenas o ano atual. Ao pesquisar anos, meses ou dias anteriores, o Last Master busca esse recorte na Last.fm.</p>
+            <p class="auth-note">Na primeira sincronização, todo o histórico é baixado da Last.fm. Nas sincronizações seguintes, apenas o ano atual é atualizado. Todos os filtros funcionam localmente, sem novas chamadas à API.</p>
             <label class="check-row api-memory-row">
               <input id="rememberApiKeyCheckbox" type="checkbox">
               Lembrar API key neste navegador
@@ -424,6 +423,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=security-netlify-1"></script>
+    <script type="module" src="app/principal.js"></script>
   </body>
 </html>

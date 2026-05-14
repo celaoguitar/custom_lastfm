@@ -7,7 +7,7 @@
   --card-strong: #1f2330;
   --muted: #9aa3b2;
   --muted-strong: #cbd5e1;
-  --border: rgba(255, 255, 255, 0.15);
+  --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.16);
   --primary: #ff365f;
   --primary-strong: #e31b45;
@@ -882,6 +882,8 @@ label {
 
 .music-group {
   min-width: 0;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 64px;
 }
 
 .music-group summary {
