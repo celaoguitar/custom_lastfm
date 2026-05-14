@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/marce/AppData/Local/Temp/pw-lastmaster/**)",
+      "Bash(npx playwright *)"
+    ]
+  }
+}

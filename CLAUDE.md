@@ -18,6 +18,34 @@ node local-server.js
 
 Sem build — Vanilla JS/CSS sem dependências ou bundler.
 
+## Testes E2E (Playwright)
+
+Os specs ficam em [e2e/site.spec.js](e2e/site.spec.js). Setup único:
+
+```bash
+cd e2e
+npm install
+npx playwright install chromium
+```
+
+Para rodar (o servidor local precisa estar rodando primeiro):
+
+```bash
+# Terminal 1 — servidor
+node local-server.js
+
+# Terminal 2 — testes
+cd e2e && npx playwright test
+
+# Rodar um teste específico
+cd e2e && npx playwright test --grep "navegação entre abas"
+
+# Modo com UI interativa
+cd e2e && npx playwright test --ui
+```
+
+Os 12 testes cobrem: carregamento sem erros, modo demo, navegação entre views, filtros de período, lazy render de artistas/álbuns, scroll e exportações.
+
 ## Arquitetura
 
 SPA (Single-Page Application) que busca scrobbles da Last.fm e exibe dashboards de analytics no navegador. A interface é em português (pt-BR). Todos os módulos usam ES Modules nativos do browser (`<script type="module">`).

@@ -5,6 +5,9 @@ node_modules/
 test-results/
 playwright-report/
 testes/
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/
 
 # Logs
 *.log
