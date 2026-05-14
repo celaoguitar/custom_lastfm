@@ -186,12 +186,53 @@ export function renderizarMetricas() {
 
 // ─── Lista de faixas (hierarquia) ────────────────────────────────────────────
 
+// Guarda os dados de cada artista para renderização preguiçosa.
+// WeakMap garante que as entradas são liberadas quando o elemento sai do DOM.
+const _dadosArtista = new WeakMap();
+
+function _htmlAlbums(artista) {
+  return artista.albums.map((album, ai) => `
+    <details class="music-group album-group" ${ai === 0 ? "open" : ""}>
+      <summary class="music-summary">
+        <img src="${escaparHtml(album.image || IMAGEM_PADRAO)}" alt="">
+        <span class="music-title">
+          <strong>${escaparHtml(album.album)}</strong>
+          <small>${formatarNumero(album.tracks.length)} ${album.tracks.length === 1 ? "música agrupada" : "músicas agrupadas"}</small>
+        </span>
+        <span class="data-count">${pluralizarMusica(album.count)}</span>
+      </summary>
+      <div class="music-track-list">
+        ${album.tracks.map((faixa) => `
+          <div class="music-track-row">
+            <span>
+              <strong>${escaparHtml(faixa.name)}</strong>
+              <small>Última vez: ${escaparHtml(formatarDataHora(faixa.ultimoPlay))}</small>
+            </span>
+            <span class="data-count">${formatarNumero(faixa.count)}x</span>
+          </div>
+        `).join("")}
+      </div>
+    </details>
+  `).join("");
+}
+
+function _expandirArtista(detalhe) {
+  // Não renderiza novamente se o conteúdo já foi gerado
+  if (detalhe.querySelector(".music-children")) return;
+  const artista = _dadosArtista.get(detalhe);
+  if (!artista) return;
+  const conteudo = document.createElement("div");
+  conteudo.className = "music-children";
+  conteudo.innerHTML = _htmlAlbums(artista);
+  detalhe.append(conteudo);
+}
+
 export function renderizarListaFaixas() {
   if (!elementos.listaFaixas) return;
-  const visiveis    = getTracksVisiveis();
-  const hierarquia  = getHierarquiaFaixas(visiveis);
-  const limite      = Number(elementos.limitResultados.value);
-  const linhas      = hierarquia.slice(0, limite);
+  const visiveis   = getTracksVisiveis();
+  const hierarquia = getHierarquiaFaixas(visiveis);
+  const limite     = Number(elementos.limitResultados.value);
+  const linhas     = hierarquia.slice(0, limite);
 
   elementos.listaFaixas.innerHTML = "";
   if (elementos.contadorListaFaixas) {
@@ -206,7 +247,7 @@ export function renderizarListaFaixas() {
 
   linhas.forEach((artista, i) => {
     const totalFaixas = artista.albums.reduce((s, a) => s + a.tracks.length, 0);
-    const detalhe = document.createElement("details");
+    const detalhe     = document.createElement("details");
     detalhe.className = "music-group artist-group";
     detalhe.open      = i === 0;
     detalhe.innerHTML = `
@@ -218,32 +259,18 @@ export function renderizarListaFaixas() {
         </span>
         <span class="data-count">${pluralizarMusica(artista.count)}</span>
       </summary>
-      <div class="music-children">
-        ${artista.albums.map((album, ai) => `
-          <details class="music-group album-group" ${ai === 0 ? "open" : ""}>
-            <summary class="music-summary">
-              <img src="${escaparHtml(album.image || IMAGEM_PADRAO)}" alt="">
-              <span class="music-title">
-                <strong>${escaparHtml(album.album)}</strong>
-                <small>${formatarNumero(album.tracks.length)} ${album.tracks.length === 1 ? "música agrupada" : "músicas agrupadas"}</small>
-              </span>
-              <span class="data-count">${pluralizarMusica(album.count)}</span>
-            </summary>
-            <div class="music-track-list">
-              ${album.tracks.map((faixa) => `
-                <div class="music-track-row">
-                  <span>
-                    <strong>${escaparHtml(faixa.name)}</strong>
-                    <small>Última vez: ${escaparHtml(formatarDataHora(faixa.ultimoPlay))}</small>
-                  </span>
-                  <span class="data-count">${formatarNumero(faixa.count)}x</span>
-                </div>
-              `).join("")}
-            </div>
-          </details>
-        `).join("")}
-      </div>
     `;
+
+    _dadosArtista.set(detalhe, artista);
+
+    // Renderiza o conteúdo imediatamente apenas para o artista já aberto
+    if (i === 0) _expandirArtista(detalhe);
+
+    // Os demais só geram DOM quando o usuário abrir o grupo
+    detalhe.addEventListener("toggle", () => {
+      if (detalhe.open) _expandirArtista(detalhe);
+    });
+
     elementos.listaFaixas.append(detalhe);
   });
 }

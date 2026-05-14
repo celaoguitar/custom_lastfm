@@ -882,8 +882,15 @@ label {
 
 .music-group {
   min-width: 0;
+}
+
+/* content-visibility apenas nos grupos de artista (nível raiz).
+   Usar em grupos aninhados (.album-group) causa double-skip e trava no scroll-back.
+   O prefixo "auto" em contain-intrinsic-size faz o browser cachear o tamanho real
+   após o primeiro render, eliminando o recálculo quando o item volta ao viewport. */
+.artist-group {
   content-visibility: auto;
-  contain-intrinsic-size: 0 64px;
+  contain-intrinsic-size: auto 72px;
 }
 
 .music-group summary {
