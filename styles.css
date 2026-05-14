@@ -1274,6 +1274,58 @@ input[type="range"] {
   line-height: 1.45;
 }
 
+.api-key-guide {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.86rem;
+}
+
+.api-key-guide summary {
+  padding: 10px 12px;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.api-key-guide summary::-webkit-details-marker { display: none; }
+
+.api-key-guide summary::before {
+  content: "▸";
+  font-size: 0.75em;
+  transition: transform 0.18s ease;
+}
+
+.api-key-guide[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.api-key-steps {
+  margin: 0;
+  padding: 2px 14px 14px 32px;
+  color: var(--muted);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.api-key-steps a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.api-key-steps a:hover { text-decoration: underline; }
+
+.api-key-tip {
+  font-size: 0.82em;
+  opacity: 0.7;
+}
+
 .toast {
   position: fixed;
   right: 20px;

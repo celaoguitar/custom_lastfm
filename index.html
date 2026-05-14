@@ -414,7 +414,27 @@
               API key
               <input id="apiKeyInput" type="password" autocomplete="off" placeholder="cole sua chave">
             </label>
-            <p class="auth-note">Na primeira sincronização, todo o histórico é baixado da Last.fm. Nas sincronizações seguintes, apenas o ano atual é atualizado. Todos os filtros funcionam localmente, sem novas chamadas à API.</p>
+
+            <details class="api-key-guide" open>
+              <summary>Como criar sua API key no Last.fm</summary>
+              <ol class="api-key-steps">
+                <li>
+                  Acesse
+                  <a href="https://www.last.fm/api/account/create" target="_blank" rel="noopener noreferrer">
+                    last.fm/api/account/create
+                  </a>
+                  e faça login na sua conta Last.fm.
+                </li>
+                <li>Em <strong>Application name</strong> escreva qualquer nome, ex: <em>Last Master</em>.</li>
+                <li>Em <strong>Description</strong> escreva uma frase curta qualquer.</li>
+                <li>Deixe o campo <strong>Callback URL</strong> em branco.</li>
+                <li>Clique em <strong>Submit</strong>.</li>
+                <li>
+                  Copie o valor de <strong>API key</strong> que aparece na tela.<br>
+                  <span class="api-key-tip">Ignore o campo "Shared Secret" — não é necessário aqui.</span>
+                </li>
+              </ol>
+            </details>
             <label class="check-row api-memory-row">
               <input id="rememberApiKeyCheckbox" type="checkbox">
               Lembrar API key neste navegador
