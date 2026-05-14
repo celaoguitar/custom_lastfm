@@ -1,0 +1,29 @@
+# Dependências
+node_modules/
+
+# Testes e relatórios
+test-results/
+playwright-report/
+testes/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Variáveis de ambiente
+.env
+.env.local
+.env*.local
+
+# Build temporário
+dist/
